@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       // using package version greater than 4 use create rather than builder
       create: (context) => ProductProvider(),
+      // value: ProductProvider(),
       child: MaterialApp(
         title: 'Shop',
         debugShowCheckedModeBanner: false,
