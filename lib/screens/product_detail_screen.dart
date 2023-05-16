@@ -12,14 +12,13 @@ class ProductDetailScreen extends StatelessWidget {
     // extracting the arguments comming for the namedroute
     final productId = ModalRoute.of(context)?.settings.arguments as String;
     // adding listener
-    final productdata = Provider.of<ProductProvider>(context);
-    final product = productdata.item.where(
-      (element) => element.id == productId,
-    );
+    final product = Provider.of<ProductProvider>(context, listen: false)
+        .findById(productId);
+    // it is good to make this logic in the provider file
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('title'),
+        title: Text(product.title),
       ),
     );
   }

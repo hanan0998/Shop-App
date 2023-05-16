@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../product.dart';
+import 'product.dart';
 
 // mixin the class by using 'with' keyword with ChangeNotifier
 // because the provider package use it  behind the scene
@@ -44,9 +44,13 @@ class ProductProvider with ChangeNotifier {
     return [..._item];
   }
 
+  Product findById(String id) {
+    return _item.firstWhere((element) => element.id == id);
+  }
+
   void addProduc() {
     // _item.add(value);
     notifyListeners();
-    // notifyListeners() is use to tell all the listeners about the update data
+    // notifyListeners() is use to tell all the listeners about the updated data
   }
 }
