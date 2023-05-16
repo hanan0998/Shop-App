@@ -5,11 +5,15 @@ import 'package:provider/provider.dart';
 import '../models/providers/product_provider.dart';
 
 class ProductGridView extends StatelessWidget {
+  final showFavourite;
+  ProductGridView(this.showFavourite);
   @override
   Widget build(BuildContext context) {
     // addinng listner which is provider by provider package
-    final products = Provider.of<ProductProvider>(context, listen: true).item;
-    // final products = productData.item;
+    final productContainer =
+        Provider.of<ProductProvider>(context, listen: true);
+    final products =
+        showFavourite ? productContainer.favorItem : productContainer.item;
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
       itemCount: products.length,

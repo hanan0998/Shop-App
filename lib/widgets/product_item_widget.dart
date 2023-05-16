@@ -9,7 +9,8 @@ import '../screens/product_detail_screen.dart';
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final productItem = Provider.of<Product>(context);
+    final productItem = Provider.of<Product>(context, listen: false);
+    // print('Product Rebuilt!');
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -29,14 +30,17 @@ class ProductItem extends StatelessWidget {
             productItem.title,
             textAlign: TextAlign.center,
           ),
-          leading: IconButton(
-            icon: Icon(productItem.isFavorite
-                ? Icons.favorite
-                : Icons.favorite_border_outlined),
-            color: Theme.of(context).colorScheme.secondary,
-            onPressed: () {
-              productItem.toggleFavoriteStatus();
-            },
+          leading: Consumer<Product>(
+            builder: (context, value, child) => IconButton(
+              icon: Icon(productItem.isFavorite
+                  ? Icons.favorite
+                  : Icons.favorite_border_outlined),
+              color: Colors.deepOrange,
+              onPressed: () {
+                productItem.toggleFavoriteStatus();
+              },
+            ),
+            child: Text("hi! I will not rebuild!"),
           ),
           trailing: IconButton(
             icon: Icon(Icons.shopping_cart),
