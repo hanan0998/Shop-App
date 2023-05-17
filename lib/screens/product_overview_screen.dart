@@ -1,5 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+// import 'dart:html';
 
+import 'package:flutter/material.dart';
+import 'package:shop/models/providers/cart_provider.dart';
+import 'package:shop/screens/cart_screen.dart';
+
+import '../widgets/badge.dart';
 import '../widgets/product_gridview_widget.dart';
 // import '../models/product.dart';
 // import '../widgets/product_item_widget.dart';
@@ -18,30 +24,45 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         title: Text('MyShop'),
         actions: <Widget>[
           PopupMenuButton(
-              onSelected: (FilterOption value) {
-                // print(value);
-                setState(() {
-                  if (value == FilterOption.Favorites) {
-                    showFavoriteOnly = true;
-                    // print(showFavoriteOnly);
-                  } else {
-                    showFavoriteOnly = false;
-                  }
-                });
+            onSelected: (FilterOption value) {
+              // print(value);
+              setState(() {
+                if (value == FilterOption.Favorites) {
+                  showFavoriteOnly = true;
+                  // print(showFavoriteOnly);
+                } else {
+                  showFavoriteOnly = false;
+                }
+              });
+            },
+            icon: Icon(
+              Icons.more_vert,
+            ),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: Text("Only Favorites"),
+                value: FilterOption.Favorites,
+              ),
+              PopupMenuItem(
+                child: Text("Show All"),
+                value: FilterOption.All,
+              ),
+            ],
+          ),
+          Consumer<Cart>(
+            builder: (context, cart, ch) => MyBadge(
+              value: cart.productAmount.toString(),
+              child: ch!,
+            ),
+            child: IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routeName);
               },
               icon: Icon(
-                Icons.more_vert,
+                Icons.shopping_cart,
               ),
-              itemBuilder: (context) => [
-                    PopupMenuItem(
-                      child: Text("Only Favorites"),
-                      value: FilterOption.Favorites,
-                    ),
-                    PopupMenuItem(
-                      child: Text("Show All"),
-                      value: FilterOption.All,
-                    ),
-                  ])
+            ),
+          ),
         ],
       ),
       body: ProductGridView(showFavoriteOnly),
