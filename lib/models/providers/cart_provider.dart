@@ -31,7 +31,7 @@ class Cart with ChangeNotifier {
   double get totalAmount {
     var total = 0.0;
     _items!.forEach((key, value) {
-      total += value.price + value.quantity;
+      total += value.price * value.quantity;
     });
     return total;
   }
@@ -54,6 +54,17 @@ class Cart with ChangeNotifier {
               price: price,
               quantity: 1));
     }
+    notifyListeners();
+  }
+
+// to remove the key and value from the map
+  void removeItem(String productId) {
+    _items!.remove(productId);
+    notifyListeners();
+  }
+
+  void clear() {
+    _items = {};
     notifyListeners();
   }
 }
