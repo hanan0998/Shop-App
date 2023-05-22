@@ -10,8 +10,8 @@ class ProductGridView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // addinng listner which is provider by provider package
-    final productContainer =
-        Provider.of<ProductProvider>(context, listen: true);
+    final productContainer = context.watch<ProductProvider>();
+    // Provider.of<ProductProvider>(context, listen: true);
     final products =
         showFavourite ? productContainer.favorItem : productContainer.item;
     return GridView.builder(
