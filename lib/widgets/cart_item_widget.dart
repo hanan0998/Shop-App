@@ -22,11 +22,30 @@ class CartItemWidget extends StatelessWidget {
     return Dismissible(
       key: ValueKey(id),
       direction: DismissDirection.endToStart,
+      // to show dialog box
+      confirmDismiss: (direction) {
+        return showDialog(
+          context: context,
+          builder: ((context) => AlertDialog(
+                title: Text("Are you sure?"),
+                content: Text("Do you want to remove the item from the cart?"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: Text("No")),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                      child: Text("Yes")),
+                ],
+              )),
+        );
+      },
       onDismissed: (direction) {
         Provider.of<Cart>(context, listen: false).removeItem(productId);
-        // to add Snakbar (snackbar is the popup message come on the end of the screen)
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('$title dismissed')));
       },
       background: Container(
         color: Theme.of(context).colorScheme.error,
