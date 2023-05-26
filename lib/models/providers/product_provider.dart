@@ -79,4 +79,21 @@ class ProductProvider with ChangeNotifier {
     notifyListeners();
     // notifyListeners() is use to tell all the listeners about the updated data
   }
+
+  // method to update the product
+  void updateProduct(String id, Product product) {
+    final prodindex = _item.indexWhere((element) => element.id == id);
+    if (prodindex >= 0) {
+      _item[prodindex] = product;
+      notifyListeners();
+    } else {
+      print('...');
+    }
+  }
+
+  // method to delete the product
+  void deleteProduct(String id) {
+    _item.removeWhere((element) => element.id == id);
+    notifyListeners();
+  }
 }

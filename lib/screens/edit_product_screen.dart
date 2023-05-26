@@ -21,27 +21,33 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   // adding global key to interact with form widget
   final _form = GlobalKey<FormState>();
-  bool init = true;
+  var init = true;
   var initvalues = {
     'title': '',
     'description': '',
     'price': '',
-    'imageUrl': '',
   };
+
+  var _editedProduct = Product(
+      id: null,
+      title: 'title',
+      description: 'description',
+      imageUrl: 'imageUrl',
+      price: 0.0);
 
   @override
   void didChangeDependencies() {
     if (init) {
-      final productId = ModalRoute.of(context)?.settings.arguments as String;
+      final productId = ModalRoute.of(context)?.settings.arguments;
       if (productId != null) {
-        final _editedProduct =
-            context.read<ProductProvider>().findById(productId);
+        _editedProduct =
+            context.read<ProductProvider>().findById(productId as String);
+        // print(_editedProduct.id);
         initvalues = {
           'title': _editedProduct.title,
           'description': _editedProduct.description,
           'price': _editedProduct.price.toString(),
           // 'imageUrl': _editedProduct.imageUrl,
-          'imageUrl': ''
         };
         _imageUrlControllor.text = _editedProduct.imageUrl;
       }
@@ -50,13 +56,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
     super.didChangeDependencies();
   }
-
-  var _editedProduct = Product(
-      id: '',
-      title: 'title',
-      description: 'description',
-      imageUrl: 'imageUrl',
-      price: 0.0);
 
   // for adding listener
   @override
@@ -99,9 +98,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
     // to save every field of the form using onsaved parameter
     _form.currentState!.save();
-    // using provider to add product to the product list
-    context.read<ProductProvider>().addProduct(_editedProduct);
-    // after adding product i have to leave the page
+    if (_editedProduct.id != null) {
+      // print(_editedProduct.id);
+      print("update Product is called!");
+      context
+          .read<ProductProvider>()
+          .updateProduct(_editedProduct.id!, _editedProduct);
+    } else {
+      // print(_editedProduct.id);
+      // print("addProduct is called!");
+      context.read<ProductProvider>().addProduct(_editedProduct);
+    }
+
     Navigator.of(context).pop();
   }
 
@@ -146,7 +154,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         title: newValue!,
                         description: _editedProduct.description,
                         imageUrl: _editedProduct.imageUrl,
-                        price: _editedProduct.price);
+                        price: _editedProduct.price,
+                        isFavorite: _editedProduct.isFavorite);
                   },
                 ),
                 TextFormField(
@@ -177,7 +186,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         title: _editedProduct.title,
                         description: _editedProduct.description,
                         imageUrl: _editedProduct.imageUrl,
-                        price: double.parse(newValue!));
+                        price: double.parse(newValue!),
+                        isFavorite: _editedProduct.isFavorite);
                   },
                 ),
                 TextFormField(
@@ -193,7 +203,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         title: _editedProduct.title,
                         description: newValue!,
                         imageUrl: _editedProduct.imageUrl,
-                        price: _editedProduct.price);
+                        price: _editedProduct.price,
+                        isFavorite: _editedProduct.isFavorite);
                   },
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -258,6 +269,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         },
                         onSaved: (newValue) {
                           _editedProduct = Product(
+                              isFavorite: _editedProduct.isFavorite,
                               id: _editedProduct.id,
                               title: _editedProduct.title,
                               description: _editedProduct.description,
