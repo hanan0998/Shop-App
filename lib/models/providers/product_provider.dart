@@ -67,8 +67,15 @@ class ProductProvider with ChangeNotifier {
     return _item.firstWhere((element) => element.id == id);
   }
 
-  void addProduc() {
-    // _item.add(value);
+  void addProduct(Product product) {
+    final item = Product(
+        id: DateTime.now().toString(),
+        title: product.title,
+        description: product.description,
+        imageUrl: product.imageUrl,
+        price: product.price);
+    _item.add(item);
+    // _item.insert(0, item); // to  insert at the begining
     notifyListeners();
     // notifyListeners() is use to tell all the listeners about the updated data
   }
