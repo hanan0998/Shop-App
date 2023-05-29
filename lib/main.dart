@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         title: 'Shop',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          // useMaterial3: true,
           primaryColor: Colors.purple,
           fontFamily: 'Lato',
           // canvasColor: Colors.pink,
