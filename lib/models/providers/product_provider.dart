@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'product.dart';
+import '../http_exception.dart';
 
 // mixin the class by using 'with' keyword with ChangeNotifier
 // because the provider package use it  behind the scene
@@ -105,11 +107,18 @@ class ProductProvider with ChangeNotifier {
   }
 
   // method to update the product
-  void updateProduct(String id, Product product) {
-    // storing the url which firebase give us
-
+  Future<void> updateProduct(String id, Product product) async {
     final prodindex = _item.indexWhere((element) => element.id == id);
     if (prodindex >= 0) {
+      final url = Uri.https('flutter-devlopment-default-rtdb.firebaseio.com',
+          '/product/$id.json');
+      await http.patch(url,
+          body: json.encode({
+            'title': product.title,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'price': product.price
+          }));
       _item[prodindex] = product;
       notifyListeners();
     } else {
@@ -118,9 +127,22 @@ class ProductProvider with ChangeNotifier {
   }
 
   // method to delete the product
-  void deleteProduct(String id) {
-    _item.removeWhere((element) => element.id == id);
+  Future<void> deleteProduct(String id) async {
+    final url = Uri.https(
+        'flutter-devlopment-default-rtdb.firebaseio.com', '/product/$id.json');
+    final productIndex = _item.indexWhere((element) => element.id == id);
+    var existingProduct = _item[productIndex];
+    _item.removeAt(productIndex);
     notifyListeners();
+
+    // _item.removeWhere((element) => element.id == id);
+    final response = await http.delete(url);
+    // to catch the error
+    if (response.statusCode >= 400) {
+      _item.insert(productIndex, existingProduct);
+      notifyListeners();
+      throw HttpException('Could not delted the Product');
+    }
   }
 
   // adding method to fetch the data from the server

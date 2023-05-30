@@ -105,13 +105,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (_editedProduct.id != null) {
       // print(_editedProduct.id);
       print("update Product is called!");
-      context
+      // await because the updtaProduct returns the future
+      await context
           .read<ProductProvider>()
           .updateProduct(_editedProduct.id!, _editedProduct);
-      setState(() {
-        isLoading = false;
-      });
-      Navigator.of(context).pop();
     } else {
       try {
         // here you use the await because the addProduct return the future, we have to wait to the future
@@ -133,13 +130,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
           ),
         );
         // the finally block always execute whether the try  or catch block will execute properlly or not
-      } finally {
-        setState(() {
-          isLoading = false;
-        });
-        Navigator.of(context).pop();
       }
+      // finally {
+      //   setState(() {
+      //     isLoading = false;
+      //   });
+      //   Navigator.of(context).pop();
+      // }
     }
+    setState(() {
+      isLoading = false;
+    });
+    Navigator.of(context).pop();
 
     // Navigator.of(context).pop();
   }
