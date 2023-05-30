@@ -2,8 +2,9 @@ import 'package:provider/provider.dart';
 // import 'dart:html';
 
 import 'package:flutter/material.dart';
-import 'package:shop/models/providers/cart_provider.dart';
-import 'package:shop/screens/cart_screen.dart';
+import '../models/providers/cart_provider.dart';
+import '../models/providers/product_provider.dart';
+import './cart_screen.dart';
 import '../widgets/app_drawer_widget.dart';
 
 import '../widgets/badge.dart';
@@ -18,6 +19,37 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var showFavoriteOnly = false;
+  var _initState = true;
+  var isLoading = false;
+
+  @override
+  void initState() {
+    // you cannot use context.watch inside the initstate
+    // context.watch<ProductProvider>().fetchAndSetData();
+    // Future.delayed(Duration.zero).then((value) {
+    //   context.watch<ProductProvider>().fetchAndSetData();
+    // });
+
+    super.initState();
+  }
+
+// we cannot use async and await in the override methods so we use then
+  @override
+  void didChangeDependencies() {
+    if (_initState) {
+      setState(() {
+        isLoading = true;
+      });
+      context.watch<ProductProvider>().fetchAndSetData().then((value) {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    }
+    _initState = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +99,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: MyDrawerWidget(),
-      body: ProductGridView(showFavoriteOnly),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductGridView(showFavoriteOnly),
     );
   }
 }

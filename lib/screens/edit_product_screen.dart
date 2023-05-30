@@ -90,8 +90,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.dispose();
   }
 
-// adding method to save the form
-  void _saveForm() {
+// as the .addProduct is async function you also convert _saveForm into async
+  void _saveForm() async {
     // .validate return a boolean value
     final isValid = _form.currentState!.validate();
     if (!isValid) {
@@ -113,16 +113,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
       });
       Navigator.of(context).pop();
     } else {
-      // print(_editedProduct.id);
-      // print("addProduct is called!");
-      context
-          .read<ProductProvider>()
-          .addProduct(_editedProduct)
-          .catchError((error) {
-        // the showDialog class is also have future so return the showdialog means
-        // it return the future when the button is pressed to catchError,
-        // after that the .then will execute
-        return showDialog(
+      try {
+        // here you use the await because the addProduct return the future, we have to wait to the future
+        await context.read<ProductProvider>().addProduct(_editedProduct);
+      } catch (error) {
+        // as the showDialog returns a future we use 'await' to
+        await showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text("An error occured!"),
@@ -131,18 +127,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
               TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    setState(() {
-                      isLoading = false;
-                    });
-                    Navigator.of(context).pop();
                   },
                   child: Text("Okay"))
             ],
           ),
         );
-      }).then((value) {
-        print('Then is running');
-      });
+        // the finally block always execute whether the try  or catch block will execute properlly or not
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.of(context).pop();
+      }
     }
 
     // Navigator.of(context).pop();
