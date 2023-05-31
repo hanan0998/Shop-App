@@ -147,8 +147,8 @@ class ProductProvider with ChangeNotifier {
 
   // adding method to fetch the data from the server
   Future<void> fetchAndSetData() async {
-    final url = Uri.parse(
-        'https://flutter-devlopment-default-rtdb.firebaseio.com/product.json');
+    final url = Uri.https(
+        'flutter-devlopment-default-rtdb.firebaseio.com', '/product.json');
     try {
       final response = await http.get(url);
       print("Fetch function is executed!");
@@ -157,6 +157,9 @@ class ProductProvider with ChangeNotifier {
       // convert the data in usefull fomr
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
+      if (extractedData == null) {
+        return;
+      }
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(
           Product(
