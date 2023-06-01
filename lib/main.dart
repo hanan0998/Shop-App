@@ -10,6 +10,7 @@ import './screens/product_overview_screen.dart';
 import './screens/orders_screen.dart';
 import './screens/user_product_screen.dart';
 import './screens/edit_product_screen.dart';
+import './screens/auth_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,14 +35,18 @@ class MyApp extends StatelessWidget {
         title: 'Shop',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          // useMaterial3: true,
-          primaryColor: Colors.purple,
-          fontFamily: 'Lato',
-          // canvasColor: Colors.pink,
-          colorScheme: ColorScheme.light(
-              secondary: Colors.deepOrange, error: Colors.red.shade700),
-        ),
-        home: ProductsOverviewScreen(),
+            // accentColor: myColor,
+            // useMaterial3: true,
+            textTheme: TextTheme(bodyLarge: TextStyle(color: Colors.white)),
+            primaryColor: Colors.purple,
+            fontFamily: 'Lato',
+            // canvasColor: Colors.pink,
+            colorScheme: ColorScheme.light(
+              secondary: Colors.deepOrange,
+              error: Colors.red.shade700,
+            ),
+            primaryTextTheme: TextTheme(labelLarge: TextStyle(color: null))),
+        home: AuthScreen(),
         routes: {
           // '/mainScreen': (context) => ProductsOverviewScreen(),
           ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
