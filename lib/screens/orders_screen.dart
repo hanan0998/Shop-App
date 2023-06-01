@@ -13,35 +13,49 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  var _isloading = false;
+  late Future _ordersFuture;
+  Future _obtainOrdersFuture() {
+    return Provider.of<Orders>(context, listen: false).fetchAndSetData();
+  }
+
   @override
   void initState() {
-    Future.delayed(Duration.zero).then((value) async {
-      setState(() {
-        _isloading = true;
-      });
-      await Provider.of<Orders>(context, listen: false).fetchAndSetData();
-      setState(() {
-        _isloading = false;
-      });
-    });
+    _ordersFuture = _obtainOrdersFuture();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final orderData = Provider.of<Orders>(context);
+    print("Order screen built!");
+    // commented this because we face an infinite loop
+    // in the futurebuilder widget fetchAndSetData call it notifylisteners and the listener rebuilt again and infinit loop occure
+    // final orderData = Provider.of<Orders>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Your Orders"),
       ),
-      body: _isloading
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: orderData.orders.length,
-              itemBuilder: (context, index) =>
-                  OrderItemWidget(orderData.orders[index]),
-            ),
+      body: FutureBuilder(
+        future: _ordersFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else {
+            if (snapshot.error != null) {
+              // here is the stuff to handle the error
+              return Center(
+                child: Text("An error Occure"),
+              );
+            } else {
+              return Consumer<Orders>(
+                  builder: (context, value, child) => ListView.builder(
+                        itemCount: value.orders.length,
+                        itemBuilder: (context, index) =>
+                            OrderItemWidget(value.orders[index]),
+                      ));
+            }
+          }
+        },
+      ),
       drawer: MyDrawerWidget(),
     );
   }
