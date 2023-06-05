@@ -178,3 +178,11 @@ class ProductProvider with ChangeNotifier {
     }
   }
 }
+
+// method to update the product
+Future<void> updateProduct(String id, Product product) async {
+  final url = Uri.https(
+      'flutter-devlopment-default-rtdb.firebaseio.com', '/product/$id.json');
+  await http.patch(url,
+      body: json.encode({'title': 'New title', 'price': 'New Price'}));
+}
