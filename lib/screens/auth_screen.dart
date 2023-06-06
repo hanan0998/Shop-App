@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// import '../providers/auth.dart';
+import '../models/providers/auth_provider.dart';
 import '../models/http_exception.dart';
 
 enum AuthMode { Signup, Login }
@@ -133,10 +133,32 @@ class _AuthCardState extends State<AuthCard> {
       _isLoading = true;
     });
 
-    if (_authMode == AuthMode.Login) {
-      // Log user in
-    } else {
-      // Sign user up
+    try {
+      if (_authMode == AuthMode.Login) {
+        // Log user in
+        await Provider.of<Auth>(context, listen: false).signIn(
+            _authData['email'] as String, _authData['password'] as String);
+      } else {
+        // Sign user up
+        await Provider.of<Auth>(context, listen: false).signUp(
+            _authData['email'] as String, _authData['password'] as String);
+      }
+    } on HttpException catch (error) {
+      var errorMessage = 'Authentication failed';
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'This email address is already in use.';
+      } else if (error.toString().contains('INVALID_EMAIL')) {
+        errorMessage = 'This is an invalid email.';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'This password is to weak';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Could find user with this email';
+      } else if (error.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Invalid Password';
+      }
+      _showErrorDialog(errorMessage);
+    } catch (error) {
+      const errorMessage = "Could not authenticate you. Please try again later";
     }
 
     setState(() {

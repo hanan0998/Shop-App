@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -67,6 +67,14 @@ class ProductProvider with ChangeNotifier {
   //   showFavoritesOnly = false;
   //   notifyListeners();
   // }
+
+  late String authToken;
+  // ProductProvider(this.authToken, this._item);
+
+  void update(String tokenData, List<Product> item) {
+    authToken = tokenData;
+    _item = item;
+  }
 
   Product findById(String id) {
     return _item.firstWhere((element) => element.id == id);
@@ -147,8 +155,8 @@ class ProductProvider with ChangeNotifier {
 
   // adding method to fetch the data from the server
   Future<void> fetchAndSetData() async {
-    final url = Uri.https(
-        'flutter-devlopment-default-rtdb.firebaseio.com', '/product.json');
+    final url = Uri.https('flutter-devlopment-default-rtdb.firebaseio.com',
+        '/product.json?auth=$authToken');
     try {
       final response = await http.get(url);
       print("Fetch function is executed!");
